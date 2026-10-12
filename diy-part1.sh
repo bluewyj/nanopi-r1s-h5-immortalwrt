@@ -4,8 +4,8 @@
 # 执行时机：`./scripts/feeds update -a` 之前
 #
 # 说明：ImmortalWrt 25.12 自带的 feeds 里已经包含 luci-app-passwall、
-#       luci-app-openclash、samba4、aria2、transmission、dockerman、diskman 等，
-#       所以默认什么都不用加。这里只保留扩展位，方便你以后接第三方源。
+#       luci-app-openclash、samba4、aria2、transmission、dockerman、diskman 等。
+#       本脚本额外追加 iStore（luci-app-store）第三方源。
 #
 set -e
 
@@ -15,6 +15,15 @@ FEEDS_FILE="${OPENWRT_DIR}/feeds.conf.default"
 echo "==> [diy-part1] 源码目录: ${OPENWRT_DIR}"
 echo "==> [diy-part1] 当前 feeds.conf.default:"
 cat "${FEEDS_FILE}"
+
+# ---------------------------------------------------------------------------
+# iStore 软件中心（易有云 / iStoreOS）
+# 官方集成方式：https://github.com/linkease/istore
+# 依赖 luci-compat（已在 configs/nanopi-r1s-h5.config 中启用）
+# ---------------------------------------------------------------------------
+echo >> "${FEEDS_FILE}"
+echo 'src-git istore https://github.com/linkease/istore;main' >> "${FEEDS_FILE}"
+echo "==> [diy-part1] 已追加 istore feed"
 
 # ---------------------------------------------------------------------------
 # 可选：如果你想要上游最新版的 PassWall（比 ImmortalWrt 自带的新，但会和自带
@@ -28,4 +37,6 @@ cat "${FEEDS_FILE}"
 # ---------------------------------------------------------------------------
 # sed -i 's#https://github.com/immortalwrt/packages.git#https://mirror.sjtu.edu.cn/git/immortalwrt/packages.git#' "${FEEDS_FILE}"
 
+echo "==> [diy-part1] 完成后的 feeds.conf.default:"
+cat "${FEEDS_FILE}"
 echo "==> [diy-part1] 完成"
