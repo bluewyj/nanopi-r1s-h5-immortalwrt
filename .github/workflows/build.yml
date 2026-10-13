@@ -100,6 +100,10 @@ jobs:
         run: |
           cat $GITHUB_WORKSPACE/$CONFIG_FILE >> .config
           make defconfig
+          # 防止其它包又把 openssl 变体勾回来，与 mbedtls 抢 /lib/libustream-ssl.so
+          sed -i 's/^CONFIG_PACKAGE_libustream-openssl=y/# CONFIG_PACKAGE_libustream-openssl is not set/' .config
+          sed -i 's/^CONFIG_PACKAGE_luci-ssl-openssl=y/# CONFIG_PACKAGE_luci-ssl-openssl is not set/' .config
+          make defconfig
           echo "---------------- 关键配置校验 ----------------"
           grep -E 'CONFIG_TARGET_sunxi_cortexa53_DEVICE_friendlyarm_nanopi-r1s-h5=y' .config || true
           grep -E 'CONFIG_PACKAGE_kmod-rtl8189es=y' .config || true
